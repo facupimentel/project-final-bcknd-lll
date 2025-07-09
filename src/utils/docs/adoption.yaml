@@ -1,0 +1,87 @@
+paths:
+  /api/adoptions:
+    get:
+      summary: Obtener todas las solicitudes de adopción
+      tags:
+        - Adoptions
+      responses:
+        "200":
+          description: Lista de adopciones obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Adoption'
+
+  /api/adoptions/{aid}:
+    get:
+      summary: Obtener una adopción por ID
+      tags:
+        - Adoptions
+      parameters:
+        - name: aid
+          in: path
+          required: true
+          description: ID de la adopción
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Adopción encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Adoption'
+        "404":
+          description: Adopción no encontrada
+
+  /api/adoptions/{uid}/{pid}:
+    post:
+      summary: Crear una nueva solicitud de adopción
+      tags:
+        - Adoptions
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          description: ID del usuario que desea adoptar
+          schema:
+            type: string
+        - name: pid
+          in: path
+          required: true
+          description: ID de la mascota que se desea adoptar
+          schema:
+            type: string
+      responses:
+        "201":
+          description: Adopción creada exitosamente
+        "400":
+          description: Datos inválidos o adopción ya existente
+
+components:
+  schemas:
+    Adoption:
+      type: object
+      properties:
+        _id:
+          type: string
+        user:
+          type: string
+          description: ID del usuario que adopta
+        pet:
+          type: string
+          description: ID de la mascota adoptada
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+        date:
+          type: string
+          format: date-time
+      example:
+        _id: 60d123a456b7890deff98765
+        user: 60c123a456b7890deff12345
+        pet: 60c123a456b7890deff67890
+        status: pending
+        date: 2025-06-22T12:00:00Z

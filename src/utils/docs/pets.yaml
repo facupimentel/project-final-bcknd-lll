@@ -1,0 +1,160 @@
+paths:
+  /api/pets:
+    get:
+      summary: Obtener todas las mascotas
+      tags:
+        - Pets
+      responses:
+        "200":
+          description: Lista de mascotas obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pet'
+
+    post:
+      summary: Crear una nueva mascota
+      tags:
+        - Pets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/createPet'
+      responses:
+        "201":
+          description: Mascota creada exitosamente
+        "400":
+          description: Datos inválidos
+
+  /api/pets/withimage:
+    post:
+      summary: Crear una nueva mascota con imagen (form-data)
+      tags:
+        - Pets
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                species:
+                  type: string
+                age:
+                  type: integer
+                image:
+                  type: string
+                  format: binary
+      responses:
+        "201":
+          description: Mascota con imagen creada exitosamente
+        "400":
+          description: Datos inválidos o falta la imagen
+
+  /api/pets/{pid}:
+    put:
+      summary: Actualizar una mascota por ID
+      tags:
+        - Pets
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: ID de la mascota
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/updatePet'
+      responses:
+        "200":
+          description: Mascota actualizada correctamente
+        "404":
+          description: Mascota no encontrada
+
+    delete:
+      summary: Eliminar una mascota por ID
+      tags:
+        - Pets
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: ID de la mascota
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Mascota eliminada correctamente
+        "404":
+          description: Mascota no encontrada
+
+components:
+  requestBodies:
+    createPet:
+      description: Datos necesarios para crear una mascota
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              species:
+                type: string
+              age:
+                type: integer
+            example:
+              name: Max
+              species: Perro
+              age: 3
+
+    updatePet:
+      description: Datos para actualizar una mascota
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              species:
+                type: string
+              age:
+                type: integer
+            example:
+              name: Max
+              species: Gato
+              age: 4
+
+  schemas:
+    Pet:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        species:
+          type: string
+        age:
+          type: integer
+        imageUrl:
+          type: string
+      example:
+        _id: 60c123a456b7890deff12345
+        name: Max
+        species: Perro
+        age: 3
+        imageUrl: https://miservidor.com/uploads/max.jpg

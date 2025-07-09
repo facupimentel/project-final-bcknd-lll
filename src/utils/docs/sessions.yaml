@@ -1,0 +1,126 @@
+paths:
+  /api/sessions/register:
+    post:
+      summary: Registrar un nuevo usuario
+      tags:
+        - Sessions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/registerUser'
+      responses:
+        "201":
+          description: Usuario registrado exitosamente
+        "400":
+          description: Datos inválidos o usuario ya existe
+
+  /api/sessions/login:
+    post:
+      summary: Iniciar sesión de usuario
+      tags:
+        - Sessions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/loginUser'
+      responses:
+        "200":
+          description: Login exitoso
+        "401":
+          description: Credenciales incorrectas
+
+  /api/sessions/current:
+    get:
+      summary: Obtener la sesión actual (requiere autenticación)
+      tags:
+        - Sessions
+      responses:
+        "200":
+          description: Sesión actual del usuario autenticado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        "401":
+          description: No autorizado
+
+  /api/sessions/unprotectedLogin:
+    get:
+      summary: Ruta de login sin protección (para testing o fallback)
+      tags:
+        - Sessions
+      responses:
+        "200":
+          description: Login sin protección exitoso
+
+  /api/sessions/unprotectedCurrent:
+    get:
+      summary: Obtener sesión actual sin protección (para testing)
+      tags:
+        - Sessions
+      responses:
+        "200":
+          description: Datos de sesión actual sin autenticación
+
+components:
+  requestBodies:
+    registerUser:
+      description: Datos necesarios para registrar un usuario
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              first_name:
+                type: string
+              last_name:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
+            example:
+              first_name: Ana
+              last_name: Gómez
+              email: ana@correo.com
+              password: password123
+
+    loginUser:
+      description: Credenciales para iniciar sesión
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+            example:
+              email: ana@correo.com
+              password: password123
+
+  schemas:
+    Session:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            _id:
+              type: string
+            email:
+              type: string
+            role:
+              type: string
+      example:
+        user:
+          _id: 60b8c0f2e13d1c23d8d9c123
+          email: ana@correo.com
+          role: user

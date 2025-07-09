@@ -1,0 +1,125 @@
+paths:
+  /api/users:
+    get:
+      summary: Obtener todos los usuarios
+      tags:
+        - Users
+      responses:
+        "200":
+          description: Lista de usuarios obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /api/users/{uid}:
+    get:
+      summary: Obtener un usuario por ID
+      tags:
+        - Users
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          description: ID del usuario
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Usuario encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "404":
+          description: Usuario no encontrado
+
+    put:
+      summary: Actualizar un usuario por ID
+      tags:
+        - Users
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          description: ID del usuario
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/updateUser'
+      responses:
+        "200":
+          description: Usuario actualizado correctamente
+        "400":
+          description: Datos inválidos
+        "404":
+          description: Usuario no encontrado
+
+    delete:
+      summary: Eliminar un usuario por ID
+      tags:
+        - Users
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          description: ID del usuario
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Usuario eliminado correctamente
+        "404":
+          description: Usuario no encontrado
+
+components:
+  requestBodies:
+    updateUser:
+      description: Datos para actualizar un usuario
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              first_name:
+                type: string
+              last_name:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
+            example:
+              first_name: Juan
+              last_name: Pérez
+              email: juanperez@correo.com
+              password: nuevaClave123
+
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+      example:
+        _id: 60b8c0f2e13d1c23d8d9c123
+        first_name: Facundo
+        last_name: Pimentel
+        email: facu@correo.com
+        password: $2b$10$abc123...
+
