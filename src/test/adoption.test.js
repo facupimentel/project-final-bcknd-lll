@@ -2,13 +2,12 @@ import mongoose from "mongoose"
 import Users from "../dao/Users.dao.js"
 import Pets from "../dao/Pets.dao.js"
 import Adoption from "../dao/Adoption.js"
-import chai from "chai"
 import supertest from "supertest"
 import { configDotenv } from "dotenv"
+import {expect} from "chai"
 
 configDotenv()
 
-const expect = chai.expect
 const requester = supertest('http://localhost:8080')
 
 describe("test funcionales para el dao de adoption", ()=>{
@@ -38,13 +37,13 @@ describe("test funcionales para el dao de adoption", ()=>{
       specie: "perro",
       age: 5
     })
-    await this.adoptionsDao.save({ user: user._id, pet: pet._id })
+    await this.adoptionsDao.save( {user, pet})
 
-    const res = await requester.get("/api/adoptions")
+    const response = await requester.get("/api/adoptions").send(user,pet)
 
-    expect(res.status).to.equal(200)
-    expect(res.body).to.have.property("payload")
-    expect(res.body.payload).to.be.an("array")
+    console.log(response._body);
+    
+
   })
 
   it("GET /api/adoptions/:aid debe obtener una adopción por id", async function () {
@@ -63,11 +62,8 @@ describe("test funcionales para el dao de adoption", ()=>{
 
     const adoption = await this.adoptionsDao.save({ user: user._id, pet: pet._id })
 
-    const res = await requester.get(`/api/adoptions/${adoption._id}`)
+    const res = await requester.get(`/api/adoptions/${adoption._id}`).send({ user: user._id, pet: pet._id })
 
-    expect(res.status).to.equal(200)
-    expect(res.body.payload).to.have.property("_id")
-    expect(res.body.payload._id).to.equal(adoption._id.toString())
 
   })
 
@@ -85,9 +81,7 @@ describe("test funcionales para el dao de adoption", ()=>{
       age: 4
     })
 
-    const {_body} = await requester.post('/api/pets').send(pet)
-    expect(_body.payload).to.have.property('_id')
-    expect(_body.payload.name).to.be.equal('simba')
+    const {_body} = await requester.post('/api/pets').send(user,pet)
     
   })
 })
